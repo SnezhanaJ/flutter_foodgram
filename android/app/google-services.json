@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "58747088362",
+    "project_id": "flutter-foodgram",
+    "storage_bucket": "flutter-foodgram.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:58747088362:android:635a095a3799e8461d9693",
+        "android_client_info": {
+          "package_name": "com.example.foodgram"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSpPUFwPNxiOuIxIdbq1Wmu8T42xi2SIo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
