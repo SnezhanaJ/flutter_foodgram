@@ -1,6 +1,7 @@
 import 'package:date_format/date_format.dart';
 import 'package:flutter/material.dart';
 import 'package:foodgram/firestor.dart';
+import 'package:foodgram/pages/profile_page.dart';
 import 'package:foodgram/pages/show_post_location_page.dart';
 import 'package:foodgram/toast.dart';
 import 'package:foodgram/util/image_cached.dart';
@@ -30,11 +31,21 @@ class _PostWidgetState extends State<PostWidget> {
           color: Colors.white,
           child: Center(
             child: ListTile(
-              leading: ClipOval(
-                child: SizedBox(
-                  width: 35,
-                  height: 35,
-                  child: CachedImage(widget.snapshot['profileImage']),
+              leading: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ProfilePage(
+                            uid: widget.snapshot['uid'])),
+                  );
+                },
+                child: ClipOval(
+                  child: SizedBox(
+                    width: 35,
+                    height: 35,
+                    child: CachedImage(widget.snapshot['profileImage']),
+                  ),
                 ),
               ),
               title: Text(
@@ -216,6 +227,24 @@ class _PostWidgetState extends State<PostWidget> {
                       ),
                     ),
                   ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: GestureDetector(
+                  onTap:  (){
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CommentsScreen(postId:widget.snapshot['postId']), // Replace CommentPage with your actual comment page
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    "View comments",
+                  style: TextStyle(
+                    color: Colors.grey,
+                  ),),
                 ),
               ),
               Padding(
