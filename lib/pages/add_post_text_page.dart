@@ -23,7 +23,7 @@ class _AddPostTextScreenState extends State<AddPostTextScreen> {
   List<dynamic> listForPlaces = [];
 
   void placeAutocomplete(String query) async{
-    String googlePlacesApi = 'AIzaSyC8ZF_NmZp2A729z3RDxRBJWLeeXYFJZLQ';
+    String googlePlacesApi = '';
     String groundUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
     String request = '$groundUrl?input=$query&key=$googlePlacesApi';
 
