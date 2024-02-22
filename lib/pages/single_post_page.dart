@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:foodgram/firestor.dart';
 import 'package:foodgram/widgets/post_widget.dart';
+import 'package:google_fonts/google_fonts.dart';
 class SinglePostPage extends StatefulWidget {
   final String postId;
   const SinglePostPage({Key? key, required this.postId}) : super(key: key);
@@ -19,6 +20,8 @@ class _SinglePostPageState extends State<SinglePostPage> {
 
   String? loggedUser;
   Map<String, dynamic>? postData;
+  late Stream<DocumentSnapshot>? postStream;
+
 
   Future<void> fetchPost() async {
     try {
@@ -57,7 +60,9 @@ class _SinglePostPageState extends State<SinglePostPage> {
 
       });
     } catch (e) {
-      print('Error fetching user data: $e');
+      if (kDebugMode) {
+        print('Error fetching user data: $e');
+      }
     }
 
   }
@@ -67,21 +72,46 @@ class _SinglePostPageState extends State<SinglePostPage> {
     super.initState();
     _getUserData();
     fetchPost();
+    postStream = _firebaseFirestore
+        .collection('posts')
+        .doc(widget.postId)
+        .snapshots();
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-        title: const Text('Foodgram'),
+        title:  Text('Foodgram',
+          style: GoogleFonts.getFont('Euphoria Script',
+            textStyle: const TextStyle(
+              fontSize: 40, // Adjust the font size as needed
+              fontWeight: FontWeight.bold,
+              color: Colors.white70,
+            ),
+          ),),
     backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         ),
-      body: Center(
-        child: postData != null
-            ? PostWidget(postData, loggedUser)
-            : const Center(
-          child: CircularProgressIndicator(),
-        ),
-      )
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: postStream,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error: ${snapshot.error}'),
+            );
+          } else {
+            final postData = snapshot.data!.data() as Map<String, dynamic>?;
+            return postData != null
+                ? PostWidget(postData, loggedUser)
+                : const Center(
+              child: Text('Post not found'),
+            );
+          }
+        },
+      ),
     );
   }
 }

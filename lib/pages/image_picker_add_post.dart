@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'add_post_text_page.dart';
@@ -17,7 +18,15 @@ class _InstagramMediaPickerState extends State<InstagramMediaPicker> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Foodgram'),
+        title: Text('Foodgram',
+          style: GoogleFonts.getFont('Euphoria Script',
+            textStyle: const TextStyle(
+              fontSize: 40, // Adjust the font size as needed
+              fontWeight: FontWeight.bold,
+              color: Colors.white70,
+            ),
+          ),
+        ),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           Center(
@@ -53,7 +62,7 @@ class _InstagramMediaPickerState extends State<InstagramMediaPicker> {
                             color: Colors.grey.withOpacity(0.5),
                             spreadRadius: 5,
                             blurRadius: 7,
-                            offset: Offset(0, 3),
+                            offset: const Offset(0, 3),
                           ),
                         ],
                       ),
@@ -75,8 +84,12 @@ class _InstagramMediaPickerState extends State<InstagramMediaPicker> {
                           _selectedImage = null; // Clear selected image
                         });
                       },
-                      icon: Icon(Icons.close),
+                      icon: const Icon(Icons.close),
                     ),
+                  ),
+                if(_selectedImage==null)
+                  const Center(
+                    child: Text("Click the + button and add a new post to your feed!"),
                   ),
               ],
             ),
@@ -101,16 +114,16 @@ class _InstagramMediaPickerState extends State<InstagramMediaPicker> {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             ListTile(
-              leading: Icon(Icons.camera),
-              title: Text('Take a photo'),
+              leading: const Icon(Icons.camera),
+              title: const Text('Take a photo'),
               onTap: () {
                 Navigator.pop(context);
                 _loadImage(ImageSource.camera);
               },
             ),
             ListTile(
-              leading: Icon(Icons.image),
-              title: Text('Choose from gallery'),
+              leading: const Icon(Icons.image),
+              title: const Text('Choose from gallery'),
               onTap: () {
                 Navigator.pop(context);
                 _loadImage(ImageSource.gallery);

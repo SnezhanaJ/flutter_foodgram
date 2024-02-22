@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:foodgram/firestor.dart';
 import 'package:foodgram/widgets/post_widget.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,7 +15,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  final   FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   String? loggedUser;
 
 
@@ -31,18 +33,27 @@ class _HomePageState extends State<HomePage> {
         loggedUser = userData.username;
       });
     } catch (e) {
-      print('Error fetching user data: $e');
+      if (kDebugMode) {
+        print('Error fetching user data: $e');
+      }
     }
   }
 
-  FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Foodgram"),
+        title:  Text("Foodgram",
+          style: GoogleFonts.getFont('Euphoria Script',
+            textStyle: const TextStyle(
+              fontSize: 40, // Adjust the font size as needed
+              fontWeight: FontWeight.bold,
+              color: Colors.white70,
+            ),
+          ),),
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+
       ),
       body: CustomScrollView(
         slivers: [

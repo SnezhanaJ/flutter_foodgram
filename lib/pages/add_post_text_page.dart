@@ -1,9 +1,11 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:foodgram/firestor.dart';
-import 'package:foodgram/storage.dart';
+import 'package:http/http.dart' as http;
 
 
 class AddPostTextScreen extends StatefulWidget {
@@ -18,11 +20,38 @@ class _AddPostTextScreenState extends State<AddPostTextScreen> {
   final caption = TextEditingController();
   final location = TextEditingController();
   bool islooding = false;
+  List<dynamic> listForPlaces = [];
+
+  void placeAutocomplete(String query) async{
+    String googlePlacesApi = 'AIzaSyC8ZF_NmZp2A729z3RDxRBJWLeeXYFJZLQ';
+    String groundUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+    String request = '$groundUrl?input=$query&key=$googlePlacesApi';
+
+    var responseUrl =await http.get(Uri.parse(request));
+    if(responseUrl.statusCode == 200){
+      setState(() {
+        listForPlaces = jsonDecode(responseUrl.body.toString())['predictions'];
+      });
+    }
+  }
+
+  void getPlaces(){
+    placeAutocomplete(location.text);
+  }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    location.addListener(() {
+      getPlaces();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
@@ -33,7 +62,7 @@ class _AddPostTextScreenState extends State<AddPostTextScreen> {
         actions: [
           Center(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 10),
               child: GestureDetector(
                 onTap: () async {
                   setState(() {
@@ -52,7 +81,7 @@ class _AddPostTextScreenState extends State<AddPostTextScreen> {
                   // ignore: use_build_context_synchronously
                   Navigator.of(context).pop();
                 },
-                child: Text(
+                child: const Text(
                   'Share',
                   style: TextStyle(color: Colors.blue, fontSize: 15),
                 ),
@@ -63,7 +92,7 @@ class _AddPostTextScreenState extends State<AddPostTextScreen> {
       ),
       body: SafeArea(
           child: islooding
-              ? Center(
+              ? const Center(
               child: CircularProgressIndicator(
                 color: Colors.black,
               ))
@@ -104,20 +133,54 @@ class _AddPostTextScreenState extends State<AddPostTextScreen> {
                   ),
                 ),
                 const Divider(),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10),
-                  child: SizedBox(
-                    width: 280,
-                    height: 30,
-                    child: TextField(
-                      controller: location,
-                      decoration: const InputDecoration(
-                        hintText: 'Add location',
-                        border: InputBorder.none,
-                      ),
-                    ),
-                  ),
-                ),
+               Expanded(child:  Padding(
+                 padding: const EdgeInsets.symmetric(horizontal: 10),
+                 child: Column(
+                   crossAxisAlignment: CrossAxisAlignment.start,
+
+                   children: [
+                     // SizedBox(
+                     //   width: 280,
+                     //   height: 30,
+                     //   child: TextField(
+                     //     controller: location,
+                     //     decoration: const InputDecoration(
+                     //       hintText: 'Add location',
+                     //       border: InputBorder.none,
+                     //       icon: Icon(CupertinoIcons.location_solid),
+                     //     ),
+                     //   ),
+                     // ),
+                     Form(child: Padding(
+                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                       child: TextFormField(
+                         controller: location,
+                         decoration: const InputDecoration(
+                           hintText: "Search your location",
+                           prefixIcon: Icon(CupertinoIcons.location_solid)
+                         ),
+                       ),
+                     ),),
+                     const Divider(
+                       height: 4,
+                     ),
+                     Expanded(child: ListView.builder(
+                         itemCount:listForPlaces.length,
+                         itemBuilder: (context, index){
+                           return ListTile(
+                             onTap: ()async{
+                               setState(() {
+                                 location.text = listForPlaces[index]['description'];
+                               });
+                             },
+                             title: Text(listForPlaces[index]['description']),
+                           );
+                         }
+                     ),
+                     ),
+                   ],
+                 ),
+               ),)
               ],
             ),
           )),
